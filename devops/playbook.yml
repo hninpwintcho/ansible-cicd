@@ -7,8 +7,8 @@
     DOCKERHUB_USERNAME: "{{ dockerhub_username }}"
     DOCKERHUB_TOKEN: "{{ dockerhub_token }}"
     DOMAIN_NAME: "{{ domain_name }}"
-    NGINX_CONFIG_VERSION: /etc/nginx/sites-available/{{ DOMAIN_NAME }}.version
-    NGINX_CONFIG_FILE: /etc/nginx/sites-available/{{ DOMAIN_NAME }}.conf
+    NGINX_CONFiG_VERSION: /etc/nginx/sites-available/{{ DOMAIN_NAME }}.version
+    NGINX_CONFiG_FILE: /etc/nginx/sites-available/{{ DOMAIN_NAME }}.conf
     NGINX_ENABLED_FILE: /etc/nginx/sites-enabled/{{ DOMAIN_NAME }}.conf
     ENABLE_SSL: "{{ enable_ssl }}"
     APP_PORT: 3001
@@ -25,7 +25,7 @@
             
     - name: Install Docker
       apt:
-        name: docker.ce
+        name: docker.io
         state: present
 
     - name: Start Docker service
@@ -98,13 +98,13 @@
     - name: Copy Nginx configuration
       template:
         src: nginx.conf.j2
-        dest: "{{ NGINX_CONFIG_VERSION }}"
+        dest: "{{ NGINX_CONFiG_VERSION }}"
       register: nginx_config
 
     - name: Add Nginx configuration
       template:
         src: nginx.conf.j2
-        dest: "{{ NGINX_CONFIG_FILE }}"
+        dest: "{{ NGINX_CONFiG_FILE }}"
       when: nginx_config.changed
       notify: 
         - Restart Nginx
@@ -112,7 +112,7 @@
 
     - name: Enable Nginx configuration
       file:
-        src: "{{ NGINX_CONFIG_FILE }}"
+        src: "{{ NGINX_CONFiG_FILE }}"
         dest: "{{ NGINX_ENABLED_FILE }}"
         state: link
       
@@ -124,5 +124,5 @@
         state: reloaded
 
     - name: Install SSL certificate
-      command: "certbot --nginx -d {{ DOMAIN_NAME }} -n --agree-tos --email thixpin@devktops.com"
+      command: "certbot --nginx -d {{ DOMAIN_NAME }} -n --agree-tos --email hninpwintcho155@gmail.com"
       when: ssl_on
