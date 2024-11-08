@@ -1,6 +1,6 @@
 FROM node:20-alpine
 
-LABEL maintainer="Hnin Pwint Cho <hninpwintcho155@gmail.com>"
+LABEL maintainer="Soe Thura <thixpin@gmail.com>"
 LABEL version="1.0"
 LABEL description="This is a Dockerfile for a Node.js application."
 
