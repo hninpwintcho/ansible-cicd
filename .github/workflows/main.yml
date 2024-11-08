@@ -13,7 +13,7 @@ env:
   VERSION: ${{ github.run_number }}
   DOMAIN_NAME: ${{ vars.DOMAIN_NAME }}
   ENABLE_SSL: ${{ vars.ENABLE_SSL }}
-#nextjs-b5-we
+
 on:
   push:
     branches:
