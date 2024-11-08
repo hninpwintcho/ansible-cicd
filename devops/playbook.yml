@@ -1,7 +1,7 @@
 ---
 - name: Deploy Next.js Docker container
   hosts: all
-  become: yes # Run as root
+  become: yes  # Run as root
   vars:
     IMAGE_NAME: "{{ image_name }}"
     DOCKERHUB_USERNAME: "{{ dockerhub_username }}"
@@ -22,7 +22,7 @@
         swap_file_size_mb: "{{SWAP_SIZE}}"
       when: (ansible_swaptotal_mb is not defined) or 
             (ansible_swaptotal_mb < SWAP_SIZE - 8)
-            
+
     - name: Install Docker
       apt:
         name: docker.io
@@ -39,7 +39,7 @@
         name: nginx
         state: present
     
-    - name: Eanble and start Nginx
+    - name: Enable and start Nginx
       service:
         name: nginx
         state: started
@@ -99,7 +99,6 @@
       template:
         src: nginx.conf.j2
         dest: "{{ NGINX_CONFiG_VERSION }}"
-      register: nginx_config
 
     - name: Add Nginx configuration
       template:
@@ -115,8 +114,7 @@
         src: "{{ NGINX_CONFiG_FILE }}"
         dest: "{{ NGINX_ENABLED_FILE }}"
         state: link
-      
-    
+
   handlers:
     - name: Restart Nginx
       service:
