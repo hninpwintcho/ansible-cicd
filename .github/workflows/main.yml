@@ -6,7 +6,6 @@ env:
   SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
   DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
   DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
-
   SSH_HOST: ${{ vars.SSH_HOST }}
   SSH_USERNAME: ${{ vars.SSH_USERNAME }}
   DOCKER_REPO: ${{ secrets.DOCKERHUB_USERNAME }}/${{ vars.IMAGE_NAME }}
