@@ -1,0 +1,83 @@
+---
+name: Build, Push and Deploy
+
+
+env:
+  SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+  DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+  DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+
+  SSH_HOST: ${{ vars.SSH_HOST }}
+  SSH_USERNAME: ${{ vars.SSH_USERNAME }}
+  DOCKER_REPO: ${{ secrets.DOCKERHUB_USERNAME }}/${{ vars.IMAGE_NAME }}
+  VERSION: ${{ github.run_number }}
+  DOMAIN_NAME: ${{ vars.DOMAIN_NAME }}
+  ENABLE_SSL: ${{ vars.ENABLE_SSL }}
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+        
+      - name: Build and push Docker images
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ env.DOCKER_REPO }}:latest,${{ env.DOCKER_REPO }}:${{ env.VERSION }}
+          cache-from: type=registry,ref=${{ env.DOCKER_REPO }}:latest
+          cache-to: type=inline
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Create SSH key
+        run: |
+          echo "$SSH_PRIVATE_KEY" > private.key
+          chmod 600 private.key
+
+
+
+      - name: Setup Ansible
+        run: |
+          echo "[defaults]" > ansible.cfg
+          echo "inventory = inventory" >> ansible.cfg
+          echo "remote_user = $SSH_USERNAME" >> ansible.cfg
+          echo "private_key_file = private.key" >> ansible.cfg
+          echo "host_key_checking = False" >> ansible.cfg
+          echo "interpreter_python = auto_silent" >> ansible.cfg
+          echo "server ansible_host=$SSH_HOST" > inventory
+
+      - name: Install Ansible roles
+        run: |
+          ansible-galaxy install geerlingguy.swap
+
+      - name: Run Ansible playbook
+        run: |
+          ansible-playbook -i inventory \
+            --extra-vars "image_name=$DOCKER_REPO:$VERSION" \
+            --extra-vars "domain_name=$DOMAIN_NAME" \
+            --extra-vars "dockerhub_username=$DOCKERHUB_USERNAME" \
+            --extra-vars "dockerhub_token=$DOCKERHUB_TOKEN" \
+            --extra-vars "enable_ssl=$ENABLE_SSL" \
+            devops/playbook.yml
+            
