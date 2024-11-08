@@ -7,8 +7,8 @@
     DOCKERHUB_USERNAME: "{{ dockerhub_username }}"
     DOCKERHUB_TOKEN: "{{ dockerhub_token }}"
     DOMAIN_NAME: "{{ domain_name }}"
-    NGINX_CONFiG_VERSION: /etc/nginx/sites-available/{{ DOMAIN_NAME }}.version
-    NGINX_CONFiG_FILE: /etc/nginx/sites-available/{{ DOMAIN_NAME }}.conf
+    NGINX_CONFIG_VERSION: /etc/nginx/sites-available/{{ DOMAIN_NAME }}.version
+    NGINX_CONFIG_FILE: /etc/nginx/sites-available/{{ DOMAIN_NAME }}.conf
     NGINX_ENABLED_FILE: /etc/nginx/sites-enabled/{{ DOMAIN_NAME }}.conf
     ENABLE_SSL: "{{ enable_ssl }}"
     APP_PORT: 3001
@@ -98,13 +98,13 @@
     - name: Copy Nginx configuration
       template:
         src: nginx.conf.j2
-        dest: "{{ NGINX_CONFiG_VERSION }}"
+        dest: "{{ NGINX_CONFIG_VERSION }}"
       register: nginx_config
 
     - name: Add Nginx configuration
       template:
         src: nginx.conf.j2
-        dest: "{{ NGINX_CONFiG_FILE }}"
+        dest: "{{ NGINX_CONFIG_FILE }}"
       when: nginx_config.changed
       notify: 
         - Restart Nginx
@@ -112,7 +112,7 @@
 
     - name: Enable Nginx configuration
       file:
-        src: "{{ NGINX_CONFiG_FILE }}"
+        src: "{{ NGINX_CONFIG_FILE }}"
         dest: "{{ NGINX_ENABLED_FILE }}"
         state: link
       
