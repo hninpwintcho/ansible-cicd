@@ -25,7 +25,7 @@
             
     - name: Install Docker
       apt:
-        name: docker.io
+        name: docker.ce
         state: present
 
     - name: Start Docker service
