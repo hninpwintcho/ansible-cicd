@@ -8,7 +8,7 @@ env:
   DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
   SSH_HOST: ${{ vars.SSH_HOST }}
   SSH_USERNAME: ${{ vars.SSH_USERNAME }}
-  DOCKER_REPO: ${{ secrets.DOCKERHUB_USERNAME }}/${{ vars.IMAGE_NAME }}
+  DOCKER_REPO: hninpwintcho155/nextjs-apps
   VERSION: ${{ github.run_number }}
   DOMAIN_NAME: ${{ vars.DOMAIN_NAME }}
   ENABLE_SSL: ${{ vars.ENABLE_SSL }}
