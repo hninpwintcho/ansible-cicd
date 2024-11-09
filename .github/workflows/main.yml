@@ -53,6 +53,12 @@ jobs:
         run: |
           echo "$SSH_PRIVATE_KEY" > private.key
           chmod 600 private.key
+          eval $(ssh-agent -s)
+          ssh-add private.key
+          mkdir -p ~/.ssh
+          touch ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+          ssh-keyscan $SSH_HOST >> ~/.ssh/known_hosts
 
 
 
@@ -65,6 +71,12 @@ jobs:
           echo "host_key_checking = False" >> ansible.cfg
           echo "interpreter_python = auto_silent" >> ansible.cfg
           echo "server ansible_host=$SSH_HOST" > inventory
+          sudo apt update
+          sudo apt install -y ansible 
+
+      - name: Creare Ansible inventory
+        run: |
+          echo "server ansible_host=$SSH_HOST ansible_user=$SSH_USERNAME ansible_ssh_private_key_fiel=private.key" >> inventory
 
       - name: Install Ansible roles
         run: |
